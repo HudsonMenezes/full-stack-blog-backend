@@ -4,14 +4,17 @@ let articlesInfo = [
   {
     name: "learn-react",
     upvotes: 0,
+    comments: [],
   },
   {
     name: "learn-nodes",
     upvotes: 0,
+    comments: [],
   },
   {
     name: "mongodb",
     upvotes: 0,
+    comments: [],
   },
 ];
 
@@ -26,6 +29,20 @@ app.put("/api/articles/:name/upvote", (req, res) => {
     res.send(`O artigo ${name} agora tem ${article.upvotes} votos!`);
   } else {
     res.send("Este artigo não existe.");
+  }
+});
+
+app.post("/api/articles/:name/comments", (req, res) => {
+  const { name } = req.params;
+  const { postedBy, text } = req.body;
+
+  const article = articlesInfo.find((a) => a.name === name);
+
+  if (article) {
+    article.comments.push({ postedBy, text });
+    res.send(article.comments);
+  } else {
+    res.send("Este artigo não existe");
   }
 });
 
