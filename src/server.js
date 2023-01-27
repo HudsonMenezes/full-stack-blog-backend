@@ -6,16 +6,36 @@ app.use(express.json());
 
 app.get("/api/articles/:name", async (req, res) => {
   const { name } = req.params;
+  const client = new MongoClient("mongodb://127.0.0.1:27017");
+  await client.connect();
+
+  const db = client.db("react-blog-db");
+
+  const article = await db.collection("articles").findOne({ name });
+
+  if (article) {
+    res.json(article);
+  } else {
+    res.sendStatus(404);
+  }
+  res.json(article);
+});
+
+app.put("/api/articles/:name/upvote", async (req, res) => {
+  const { name } = req.params;
 
   const client = new MongoClient("mongodb://127.0.0.1:27017");
   await client.connect();
 
   const db = client.db("react-blog-db");
-});
+  await db.collection("articles").updateOne(
+    { name },
+    {
+      $inc: { upvotes: 1 },
+    }
+  );
+  const article = await db.collection("articles").findOne({ name });
 
-app.put("/api/articles/:name/upvote", (req, res) => {
-  const { name } = req.params;
-  const article = articlesInfo.find((a) => a.name === name);
   if (article) {
     article.upvotes += 1;
     res.send(`O artigo ${name} agora tem ${article.upvotes} votos!`);
