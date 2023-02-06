@@ -6,14 +6,14 @@ app.use(express.json());
 
 app.get("/api/articles/:name", async (req, res) => {
   const { name } = req.params;
+
   const article = await db.collection("articles").findOne({ name });
 
   if (article) {
     res.json(article);
   } else {
-    res.status(404);
+    res.sendStatus(404);
   }
-  // res.json(article);
 });
 
 app.put("/api/articles/:name/upvote", async (req, res) => {
@@ -28,9 +28,9 @@ app.put("/api/articles/:name/upvote", async (req, res) => {
   const article = await db.collection("articles").findOne({ name });
 
   if (article) {
-    res.send(`O artigo ${name} agora tem ${article.upvotes} votos!`);
+    res.send(`The ${name} article now has ${article.upvotes} upvotes!!!`);
   } else {
-    res.send("Este artigo não existe.");
+    res.send("That article doesn't exist");
   }
 });
 
@@ -49,13 +49,13 @@ app.post("/api/articles/:name/comments", async (req, res) => {
   if (article) {
     res.send(article.comments);
   } else {
-    res.send("Este artigo não existe");
+    res.send("That article doesn't exist!");
   }
 });
 
 connectToDb(() => {
-  console.log("Conectado ao banco de dados com sucesso!");
+  console.log("Successfully connected to database!");
   app.listen(8000, () => {
-    console.log("Servidor está rodando na porta 8000!");
+    console.log("Server is listening on port 8000");
   });
 });
