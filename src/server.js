@@ -1,7 +1,11 @@
 import express from "express";
+import cors from "cors";
 import { db, connectToDb } from "./db.js";
 
 const app = express();
+
+app.use(cors());
+
 app.use(express.json());
 
 app.get("/api/articles/:name", async (req, res) => {
@@ -28,7 +32,7 @@ app.put("/api/articles/:name/upvote", async (req, res) => {
   const article = await db.collection("articles").findOne({ name });
 
   if (article) {
-    res.send(`The ${name} article now has ${article.upvotes} upvotes!!!`);
+    res.send(article);
   } else {
     res.send("That article doesn't exist");
   }
