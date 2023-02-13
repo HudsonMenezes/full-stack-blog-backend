@@ -4,6 +4,12 @@ import fs from "fs";
 import admin from "firebase-admin";
 import { db, connectToDb } from "./db.js";
 
+import { fileURLToPath } from "url";
+import path from "path";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 const credentials = JSON.parse(fs.readFileSync("./credentials.json"));
 
 admin.initializeApp({
@@ -13,6 +19,12 @@ admin.initializeApp({
 const app = express();
 app.use(cors());
 app.use(express.json());
+
+app.use(express.static(path.join(__dirname, "../dist")));
+
+app.get(/^(?!\/api).+/, (req, res) => {
+  res.sendFile(path.join(__dirname, "../dist/index.html"));
+});
 
 app.use(async (req, res, next) => {
   const { authtoken } = req.headers;
